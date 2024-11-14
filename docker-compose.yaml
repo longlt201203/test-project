@@ -1,0 +1,53 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0
+    container_name: test_project_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:3306
+    networks:
+      - test_project_net
+    volumes:
+      - test_project_db_vol:/var/lib/mysql
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: test_project_zipkin
+    ports:
+      - 9411:9411
+    networks:
+      - test_project_net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: test_project_prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/prometheus/prometheus.yml
+    networks:
+      - test_project_net
+    command:
+      - "--web.enable-otlp-receiver"
+  
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: test_project_grafana
+    ports:
+      - 9091:3000
+    volumes:
+      - test_project_grafana_vol:/var/lib/grafana
+    networks:
+      - test_project_net
+    
+    
+networks:
+  test_project_net:
+    driver: bridge
+
+volumes:
+  test_project_grafana_vol:
+  test_project_db_vol:
