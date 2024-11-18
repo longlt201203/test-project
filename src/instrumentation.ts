@@ -12,5 +12,12 @@ export const instrumentation = new NodeSDK({
 	metricReader: new PrometheusExporter({
 		port: 9464,
 	}),
-	instrumentations: [getNodeAutoInstrumentations()],
+	instrumentations: [
+		getNodeAutoInstrumentations({
+			"@opentelemetry/instrumentation-http": {
+				ignoreIncomingRequestHook: (req) =>
+					!req.url.startsWith("/api") || req.url.startsWith("/api/docs"),
+			},
+		}),
+	],
 });

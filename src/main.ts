@@ -1,10 +1,12 @@
+import { instrumentation } from "./instrumentation";
+instrumentation.start();
+
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { Env } from "@utils";
 import helmet from "helmet";
 import { initializeTransactionalContext } from "typeorm-transactional";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import { instrumentation } from "./instrumentation";
 
 async function bootstrap() {
 	initializeTransactionalContext();
@@ -25,7 +27,5 @@ async function bootstrap() {
 	}
 
 	await app.listen(Env.LISTEN_PORT);
-
-	instrumentation.start();
 }
 bootstrap();

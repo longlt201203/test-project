@@ -12,6 +12,20 @@ services:
       - test_project_net
     volumes:
       - test_project_db_vol:/var/lib/mysql
+  
+  db_metrics_exporter:
+    image: prom/mysqld-exporter
+    container_name: test_project_db_metrics_exporter
+    environment:
+      MYSQLD_EXPORTER_PASSWORD: ${DB_PASS}
+    ports:
+      - 9104:9104
+    networks:
+      - test_project_net
+    volumes:
+      - ./mysql-exporter.cnf:/.my.cnf
+    depends_on:
+      - db
 
   zipkin:
     image: openzipkin/zipkin

@@ -1,16 +1,30 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { APP_FILTER, APP_PIPE } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_PIPE } from "@nestjs/core";
 import { MyExceptionFilter, ValidationPipe } from "@utils";
 import { DemoModule } from "@modules/demo";
 import { DbModule } from "@db";
+import { MovieModule } from "@modules/movie";
+import { ClsModule } from "nestjs-cls";
+import { AuthGuard } from "@modules/auth";
 
 @Module({
-	imports: [DbModule, DemoModule],
-	controllers: [AppController],
+	imports: [
+		DbModule,
+		ClsModule.forRoot({
+			global: true,
+			middleware: {
+				mount: true,
+				setup: (cls) => {
+					cls.set("profile", null);
+					cls.set("userInfo", null);
+				},
+			},
+		}),
+		DemoModule,
+		MovieModule,
+	],
+	controllers: [],
 	providers: [
-		AppService,
 		{
 			provide: APP_FILTER,
 			useClass: MyExceptionFilter,
@@ -18,6 +32,10 @@ import { DbModule } from "@db";
 		{
 			provide: APP_PIPE,
 			useClass: ValidationPipe,
+		},
+		{
+			provide: APP_GUARD,
+			useClass: AuthGuard,
 		},
 	],
 })
