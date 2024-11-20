@@ -6,7 +6,6 @@ import { ApiValidationError } from "@errors";
 import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
-import { Tracing } from "./tracing.decorator";
 
 @Injectable()
 export class ValidationPipe implements PipeTransform {
@@ -18,7 +17,6 @@ export class ValidationPipe implements PipeTransform {
 	 * @param {ArgumentMetadata} metadata - Metadata about the current request.
 	 * @returns The validated value if successful, throws an error otherwise.
 	 */
-	@Tracing()
 	async transform(value: any, { metatype }: ArgumentMetadata) {
 		// Transform the plain object to a DTO instance.
 		const object = plainToInstance(metatype, value, {

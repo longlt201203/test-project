@@ -21,7 +21,6 @@ export class MyExceptionFilter implements ExceptionFilter {
 	 * @param exception The thrown exception.
 	 * @param host The arguments host providing access to the request/response objects.
 	 */
-	@Tracing()
 	catch(exception: any, host: ArgumentsHost) {
 		const res = host.switchToHttp().getResponse<Response>();
 		let data: ApiError<any> = {
